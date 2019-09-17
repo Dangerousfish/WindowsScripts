@@ -5,10 +5,18 @@ function Show-Menu
      )
      cls
      Write-Host "================ $Title ================"
+#Option 1 - Create an update report and write to: USERPROFILE\Desktop\WinUpdates.html
+#Option 2 - Allow user to input: Source, Destination, Replicated folder name & Replication group name and check for a backlog in DFSR
+#Option 3 - Change the RDP port via registry
+#Option 4 - Query a list of ADComputers for their current time source 
+#Option 5 - Query version of McAfee AV installed. 
+#Option 6 - Query Event Logs for User32 events with their time and event.
+#Option 7 - Check for Windows Cluster events in the past 24hours that were manually initiated 
+#Option 8 - Install DBATools    
     
      Write-Host "1: Press '1' to create an Update Report"
      Write-Host "2: Press '2' to check for DFSRBacklog"
-     Write-Host "3: Press '3' to change the RDP Port"
+     Write-Host "3: Press '3' to change the RDP Port (Requires reboot)"
      Write-Host "4: Press '4' to check Check domain NTP settings (Run from DC)"
      Write-Host "5: Press '5' to check McAfee version"
      Write-Host "6: Press '6' to check Reboot Logs"
@@ -23,6 +31,7 @@ do
      $input = Read-Host "Please make a selection"
      switch ($input)
      {
+#Option 1 - Create an update report and write to: USERPROFILE\Desktop\WinUpdates.html
            '1' {
                 cls
                 Function Get-UpdateReport { 
@@ -131,7 +140,7 @@ do
 }
 
                     Get-UpdateReport -ComputerName $ComputerName -Verbose
-
+#Option 2 - Allow user to input: Source, Destination, Replicated folder name & Replication group name and check for a backlog in DFSR
            } '2' {
                 cls
                     $Source = Read-Host -Prompt 'Input the SOURCE server name'
@@ -146,12 +155,13 @@ do
 
                     Write-Host "Press any key to exit."
                     $null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
-
+#Option 3 - Change the RDP port via registry
            } '3' {
                 cls
                         $RDPPort= Read-Host -Prompt 'What port number should be used? Please reboot on completion'
                         Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\Terminal*Server\WinStations\RDP-TCP\ -Name PortNumber -Value $RDPPort
-           } '4' {
+#Option 4 - Query a list of ADComputers for their current time source        
+	   } '4' {
                 cls
                         $computername=Get-ADComputer -Filter {enabled -eq $true} -properties *|? operatingsystem -like "*server*" |? name -notlike "*CLSTR*"|select -Expand Name
                         $timesource=w32tm /query /computer:$Server /source 
@@ -159,7 +169,7 @@ do
                         foreach ($server in $computername) {
                         Write-output "$server gets time from $timesource"
 }
-
+#Option 5 - Query version of McAfee AV installed. 
            } '5' {
                 cls
                         function getmcafee{
@@ -178,14 +188,17 @@ do
         }
     }
 }
+#Option 6 - Query Event Logs for User32 events with their time and event.
             } '6' {
                 cls
                         Get-EventLog -Logname System -Newest 5 -Source "USER32" | Select TimeGenerated,Message -ExpandProperty Message
                 return
-            } '7' {
+#Option 7 - Check for Windows Cluster events in the past 24hours that were manually initiated         
+	    } '7' {
                 cls
                         Get-WinEvent  Microsoft-Windows-FailoverClustering/Diagnostic | ? {$_.Timecreated -gt [datetime]::Now.AddHours(-24) -and $_.Message -like "*MoveType:MoveType::Manual*"} | fl TimeCreated,Message
                    }
+#Option 8 - Install DBATools	 
 	    } '8' {   
 		   Install-Module -Name dbatools
 		   }
