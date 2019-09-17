@@ -1,0 +1,10 @@
+A collection of powershell scripts I use for work
+
+#Option 1 - Create a Windows Update report and write to: USERPROFILE\Desktop\WinUpdates.html
+#Option 2 - Allow user to input: Source, Destination, Replicated folder name & Replication group name and check for a backlog in DFSR
+#Option 3 - Change the RDP port via registry
+#Option 4 - Query a list of ADComputers for their current time source 
+#Option 5 - Query version of McAfee AV installed. 
+#Option 6 - Query Event Logs for User32 events with their time and event.
+#Option 7 - Check for Windows Cluster events in the past 24hours that were manually initiated 
+#Option 8 - Install DBATools   
