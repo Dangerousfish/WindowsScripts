@@ -13,6 +13,7 @@ function Show-Menu
      Write-Host "5: Press '5' to check McAfee version"
      Write-Host "6: Press '6' to check Reboot Logs"
      Write-Host "7: Press '7' to check for Manual Failovers"
+     Write-Host "8: Press '8' to install dbatools"
      Write-Host "Q: Press 'Q' to quit."
 }
 
@@ -185,7 +186,12 @@ do
                 cls
                         Get-WinEvent  Microsoft-Windows-FailoverClustering/Diagnostic | ? {$_.Timecreated -gt [datetime]::Now.AddHours(-24) -and $_.Message -like "*MoveType:MoveType::Manual*"} | fl TimeCreated,Message
                    }
+	    } '8' {   
+		   Install-Module -Name dbatools
+		   }
+		   
         }
+	
 pause
 }
 until ($input -eq 'q')
