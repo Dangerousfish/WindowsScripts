@@ -3,7 +3,7 @@
 $ips = Get-content "iplist.txt"
 
 foreach ($ip in $ips){
-  if (Test-Connection -ipv4 $ip -Count 1 -ErrorAction SilentlyContinue){
+  if (Test-Connection $ip -Count 1 -ErrorAction SilentlyContinue){
     Write-Host "$ip,Online"
   }
   else{
